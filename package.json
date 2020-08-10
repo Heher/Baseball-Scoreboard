@@ -1,0 +1,21 @@
+{
+  "name": "led-matrix",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^14.0.27",
+    "color": "^3.1.2",
+    "dotenv": "^8.2.0",
+    "easybotics-rpi-rgb-led-matrix": "^0.4.1",
+    "luxon": "^1.24.1",
+    "node-fetch": "^2.6.0",
+    "rpi-led-matrix": "^1.10.0",
+    "typescript": "^3.9.7"
+  }
+}
