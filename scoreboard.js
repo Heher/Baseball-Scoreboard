@@ -32,7 +32,7 @@ const moveGames = async (gameData, shownGames, matrix) => {
 
     matrix.sync();
     movingPosition = movingPosition - 1;
-    await wait(22);
+    await wait(60);
   }
 }
 
@@ -60,7 +60,7 @@ const gamesInit = (gameData, shownGames, matrix) => {
     gamesInit(gameData, shownGames, matrix);
 
     while (true) {
-      await wait(4000);
+      await wait(2000);
       await moveGames(gameData, shownGames, matrix);
       shownGames = updateShownGames(shownGames, gamesLength);
       

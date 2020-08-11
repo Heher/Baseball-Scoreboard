@@ -7,8 +7,8 @@ const getGameInfo = async (team) => {
   const buff = new Buffer.from(`${process.env.MSF_API_KEY}:MYSPORTSFEEDS`, 'utf-8');
   const base64Data = buff.toString('base64');
 
-  const date = DateTime.local().minus({ days: 1 });
-  // const date = DateTime.local();
+  // const date = DateTime.local().minus({ days: 1 });
+  const date = DateTime.local();
 
   let correctDate = date;
 
