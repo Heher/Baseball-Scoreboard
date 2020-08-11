@@ -60,7 +60,7 @@ const gamesInit = (gameData, shownGames, matrix) => {
     gamesInit(gameData, shownGames, matrix);
 
     while (true) {
-      await wait(2000);
+      await wait(8000);
       await moveGames(gameData, shownGames, matrix);
       shownGames = updateShownGames(shownGames, gamesLength);
       
