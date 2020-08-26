@@ -17,14 +17,16 @@ const findTeamTextColor = (team) => {
 }
 
 const showStartTime = (time, matrix, verticalPosition) => {
+  matrix.fgColor(0xF5F5F5);
+  
   const timeString = DateTime.fromISO(time).toLocaleString(DateTime.TIME_SIMPLE);
 
-  matrix
-    .font(statusFont)
-    .fgColor(0xF5F5F5)
-    .drawText(timeString, 35, verticalPosition + 5);
-  
-  matrix.font(font); //Resets font
+  const lines = LayoutUtils.textToLines(font, 60, timeString);
+
+  LayoutUtils.linesToMappedGlyphs(lines, font.height(), 142, matrix.height(), 'center', 'middle')
+    .forEach(glyph => {
+      matrix.drawText(glyph.char, glyph.x + 50, verticalPosition + glyph.y);
+    });
 }
 
 const completedStatus = (matrix, verticalPosition) => {
@@ -161,29 +163,28 @@ const liveGameStatus = (game, matrix, verticalPosition) => {
 
 const postponedGame = (time, matrix, verticalPosition) => {
   const isoTime = DateTime.fromISO(time);
-  // console.log(isoTime);
-  // console.log(isoTime.toLocaleString(DateTime.TIME_SIMPLE));
-  matrix.font(statusFont).fgColor(0xF5F5F5);
+
+  matrix.fgColor(0xF5F5F5);
 
   if (DateTime.local().hasSame(isoTime, 'day')) {
-    const timeStringLines = LayoutUtils.textToLines(statusFont, 46, isoTime.toLocaleString(DateTime.TIME_SIMPLE));
+    const timeStringLines = LayoutUtils.textToLines(font, 60, isoTime.toLocaleString(DateTime.TIME_SIMPLE));
 
-    LayoutUtils.linesToMappedGlyphs(timeStringLines, statusFont.height(), 46, matrix.height(), 'center', 'middle')
+    LayoutUtils.linesToMappedGlyphs(timeStringLines, font.height(), 142, matrix.height(), 'center', 'middle')
     .forEach(glyph => {
-      matrix.drawText(glyph.char, glyph.x + 25, verticalPosition + glyph.y);
+      matrix.drawText(glyph.char, glyph.x + 50, verticalPosition + glyph.y);
     });
   } else {
-    const dateStringLines = LayoutUtils.textToLines(statusFont, 46, isoTime.toLocaleString({ month: 'numeric', day: 'numeric' }));
-    const timeStringLines = LayoutUtils.textToLines(statusFont, 46, isoTime.toLocaleString({ hour: 'numeric', minute: 'numeric' }));
+    const dateStringLines = LayoutUtils.textToLines(font, 60, isoTime.toLocaleString({ month: 'numeric', day: 'numeric' }));
+    const timeStringLines = LayoutUtils.textToLines(font, 60, isoTime.toLocaleString({ hour: 'numeric', minute: 'numeric' }));
 
-    LayoutUtils.linesToMappedGlyphs(dateStringLines, statusFont.height(), 46, matrix.height(), 'center', 'middle')
+    LayoutUtils.linesToMappedGlyphs(dateStringLines, font.height(), 142, matrix.height(), 'center', 'middle')
     .forEach(glyph => {
-      matrix.drawText(glyph.char, glyph.x + 25, verticalPosition + glyph.y - 3);
+      matrix.drawText(glyph.char, glyph.x + 50, verticalPosition + glyph.y - 6);
     });
 
-    LayoutUtils.linesToMappedGlyphs(timeStringLines, statusFont.height(), 46, matrix.height(), 'center', 'middle')
+    LayoutUtils.linesToMappedGlyphs(timeStringLines, font.height(), 142, matrix.height(), 'center', 'middle')
     .forEach(glyph => {
-      matrix.drawText(glyph.char, glyph.x + 25, verticalPosition + glyph.y + 3);
+      matrix.drawText(glyph.char, glyph.x + 50, verticalPosition + glyph.y + 6);
     });
   }
   
