@@ -1,7 +1,7 @@
 const { getGameInfo } = require('./game-api');
-const { createMatrix, renderGame } = require('./scoreboard-utils');
-
-const wait = (t) => new Promise(ok => setTimeout(ok, t));
+const { createMatrix } = require('./utils/matrix-utils');
+const { wait } = require('./utils/node-utils');
+const { renderGame } = require('./utils/scoreboard-utils');
 
 const nextGame = (gameNum, gamesLength) => {
   if (gameNum + 1 > gamesLength - 1) {
@@ -22,12 +22,12 @@ const updateShownGames = (shownGames, gamesLength) => {
 const moveGames = async (gameData, shownGames, matrix) => {
   let movingPosition = 0;
   
-  while(movingPosition > -17) {
+  while(movingPosition > -33) {
     matrix.clear();
     let position = 0;
     shownGames.forEach(game => {
       renderGame(gameData.games[game], matrix, movingPosition + position);
-      position = position + 16;
+      position = position + 32;
     });
 
     matrix.sync();
@@ -41,18 +41,21 @@ const gamesInit = (gameData, shownGames, matrix) => {
 
   shownGames.forEach(game => {
     renderGame(gameData.games[game], matrix, position);
-    position = position + 16;
+    position = position + 32;
   });
 
   matrix.sync();
 }
 
-(async () => {
+const initAndStartBoard = async () => {
   try {
     const matrix = createMatrix();
 
     let gameData = await getGameInfo();
-    // console.log(gameData.games);
+    
+    // gameData.games.forEach(game => {
+    //   console.log(game.score);
+    // });
 
     let shownGames = [0, 1];
     const gamesLength = gameData.games.length;
@@ -68,7 +71,11 @@ const gamesInit = (gameData, shownGames, matrix) => {
         gameData = await getGameInfo();
       }
     }
+
+    // await wait(99999999);
   } catch (error) {
     console.log(error);
   }
-})();
+};
+
+initAndStartBoard();

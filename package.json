@@ -13,8 +13,10 @@
     "color": "^3.1.2",
     "dotenv": "^8.2.0",
     "easybotics-rpi-rgb-led-matrix": "^0.4.1",
+    "express": "^4.17.1",
     "luxon": "^1.24.1",
     "node-fetch": "^2.6.0",
+    "pm2": "^4.4.1",
     "rpi-led-matrix": "^1.10.0",
     "typescript": "^3.9.7"
   }

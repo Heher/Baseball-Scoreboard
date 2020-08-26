@@ -7,8 +7,8 @@ const wait = (t) => new Promise(ok => setTimeout(ok, t));
     const matrix = new LedMatrix(
       {
         ...LedMatrix.defaultMatrixOptions(),
-        rows: 16,
-        cols: 32,
+        rows: 32,
+        cols: 64,
         chainLength: 3,
         hardwareMapping: GpioMapping.AdafruitHatPwm,
         pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
