@@ -32,7 +32,7 @@ const moveGames = async (gameData, shownGames, matrix) => {
 
     matrix.sync();
     movingPosition = movingPosition - 1;
-    await wait(60);
+    await wait(30);
   }
 }
 
@@ -53,9 +53,9 @@ const initAndStartBoard = async () => {
 
     let gameData = await getGameInfo();
     
-    // gameData.games.forEach(game => {
-    //   console.log(game.score);
-    // });
+    gameData.games.forEach(game => {
+      console.log(game.schedule);
+    });
 
     let shownGames = [0, 1];
     const gamesLength = gameData.games.length;

@@ -43,18 +43,18 @@ const completedStatus = (matrix, verticalPosition) => {
 const inningArrow = (inningHalf, matrix, verticalPosition) => {
   matrix
   .fgColor(0xF5F5F5)
-  .drawLine(105, verticalPosition + 4, 107, verticalPosition + 4);
+  .drawLine(164, verticalPosition + 16, 166, verticalPosition + 16);
 
   if (inningHalf === 'TOP') {
     matrix
     .fgColor(0xF5F5F5)
-    .setPixel(106, verticalPosition + 3);
+    .setPixel(165, verticalPosition + 15);
   } else {
     matrix
     .fgColor(0xF5F5F5)
-    .setPixel(106, verticalPosition + 5);
+    .setPixel(165, verticalPosition + 17);
   }
-}
+};
 
 const createBase = (color, x, y, distance, matrix, verticalPosition) => {
   matrix
@@ -63,98 +63,129 @@ const createBase = (color, x, y, distance, matrix, verticalPosition) => {
     .drawLine(x + distance, verticalPosition + y - distance, x + (distance * 2), verticalPosition + y)
     .drawLine(x + (distance * 2), verticalPosition + y, x + distance, verticalPosition + y + distance)
     .drawLine(x + distance, verticalPosition + y + distance, x, verticalPosition + y);
-}
-
-const loadBase = (x, y, matrix, verticalPosition) => {
-  createBase(0xFFD500, x, y, 4, matrix, verticalPosition);
-  createBase(0xFFD500, x + 1, y, 3, matrix, verticalPosition);
-  createBase(0xFFD500, x + 2, y, 2, matrix, verticalPosition);
-  createBase(0xFFD500, x + 3, y, 1, matrix, verticalPosition);
-  matrix
-    .fgColor(0xFFD500)
-    .setPixel(x + 4, y + verticalPosition);
-}
+};
 
 const ifAboveMatrix = (height, verticalPosition) => {
   if (verticalPosition + height >= 0) {
     return verticalPosition + height;
   }
   return 0;
+};
+
+const newCreateBase = (color, x, y, distance, matrix, verticalPosition) => {
+  for (let i = 0; i < distance; i++) {
+    createBase(color, x + i, y, distance - i, matrix, verticalPosition);
+  }
+
+  matrix.setPixel(x + distance, y + verticalPosition);
 }
 
-const renderBases = (playStatus, matrix, verticalPosition) => {
+const renderBases = (playStatus, basesColor, matrix, verticalPosition) => {
   // First base
-  createBase(0xF5F5F5, 134, 20, 5, matrix, verticalPosition);
-  if (playStatus.firstBaseRunner) {
-    loadBase(135, 20, matrix, verticalPosition);
-  }
+  const firstBaseColor = playStatus.firstBaseRunner ? basesColor : 0x333333;
+  newCreateBase(firstBaseColor, 134, 20, 5, matrix, verticalPosition);
 
   // Second base
-  createBase(0xF5F5F5, 127, 13, 5, matrix, verticalPosition);
-  if (playStatus.secondBaseRunner) {
-    loadBase(128, 13, matrix, verticalPosition);
-  }
+  const secondBaseColor = playStatus.secondBaseRunner ? basesColor : 0x333333;
+  newCreateBase(secondBaseColor, 127, 13, 5, matrix, verticalPosition);
 
   // Third base
-  createBase(0xF5F5F5, 120, 20, 5, matrix, verticalPosition);
-  if (playStatus.thirdBaseRunner) {
-    loadBase(121, 20, matrix, verticalPosition);
-  }
-}
+  const thirdBaseColor = playStatus.thirdBaseRunner ? basesColor : 0x333333;
+  newCreateBase(thirdBaseColor, 120, 20, 5, matrix, verticalPosition);
+};
 
 const renderOuts = (playStatus, matrix, verticalPosition) => {
-  matrix
-    .fgColor(0xF5F5F5)
-    .drawRect(105, 7 + verticalPosition, 6, 6);
+  const oneOutColor = playStatus.outCount > 0 ? 0xFFD500 : 0x333333;
+  const twoOutColor = playStatus.outCount > 1 ? 0xFFD500 : 0x333333;
+  const threeOutColor = playStatus.outCount > 2 ? 0xFFD500 : 0x333333;
 
-  matrix
-    .fgColor(0xF5F5F5)
-    .drawRect(105, 15 + verticalPosition, 6, 6);
-
-  matrix
-    .fgColor(0xF5F5F5)
-    .drawRect(105, 23 + verticalPosition, 6, 6);
-
-  if (playStatus.outCount > 0) {
-    matrix
-      .fgColor(0xFFD500)
-      .fill(106, ifAboveMatrix(8, verticalPosition), 110, ifAboveMatrix(12, verticalPosition));
-  }
-
-  if (playStatus.outCount > 1) {
-    matrix
-      .fgColor(0xFFD500)
-      .fill(106, ifAboveMatrix(16, verticalPosition), 110, ifAboveMatrix(20, verticalPosition));
-  }
-
-  if (playStatus.outCount > 2) {
-    matrix
-      .fgColor(0xFFD500)
-      .fill(106, ifAboveMatrix(24, verticalPosition), 110, ifAboveMatrix(28, verticalPosition));
-  }
-}
-
-const ballsStrikes = (playStatus, matrix, verticalPosition) => {
-  // console.log(playStatus);
-  matrix
-    .fgColor(0xF5F5F5)
-    .drawText(`${playStatus.ballCount ? playStatus.ballCount.toString() : '0'}-${playStatus.strikeCount ? playStatus.strikeCount.toString() : '0'}`, 158, verticalPosition + 16);
-}
-
-const liveGameStatus = (game, matrix, verticalPosition) => {
-  // console.log(game.score.playStatus);
   matrix
     .fgColor(0xF5F5F5)
     .font(statusFont)
-    .drawText(game.score.currentInning ? game.score.currentInning.toString() : '1', 100, verticalPosition + 6);
+    .drawText('O', 80, verticalPosition + 22);
+
+  matrix
+    .fgColor(oneOutColor)
+    .fill(86, ifAboveMatrix(22, verticalPosition), 90, ifAboveMatrix(26, verticalPosition));
+
+  matrix
+    .fgColor(twoOutColor)
+    .fill(93, ifAboveMatrix(22, verticalPosition), 97, ifAboveMatrix(26, verticalPosition));
+
+  matrix
+    .fgColor(threeOutColor)
+    .fill(100, ifAboveMatrix(22, verticalPosition), 104, ifAboveMatrix(26, verticalPosition));
+};
+
+const renderBalls = (playStatus, matrix, verticalPosition) => {
+  const oneBallsColor = playStatus.ballCount > 0 ? 0xFFD500 : 0x333333;
+  const twoBallsColor = playStatus.ballCount > 1 ? 0xFFD500 : 0x333333;
+  const threeBallsColor = playStatus.ballCount > 2 ? 0xFFD500 : 0x333333;
+  const fourBallsColor = playStatus.ballCount > 3 ? 0xFFD500 : 0x333333;
+
+  matrix
+    .fgColor(0xF5F5F5)
+    .font(statusFont)
+    .drawText('B', 80, verticalPosition + 6);
+
+  matrix
+    .fgColor(oneBallsColor)
+    .fill(86, ifAboveMatrix(6, verticalPosition), 90, ifAboveMatrix(10, verticalPosition));
+
+  matrix
+    .fgColor(twoBallsColor)
+    .fill(93, ifAboveMatrix(6, verticalPosition), 97, ifAboveMatrix(10, verticalPosition));
+
+  matrix
+    .fgColor(threeBallsColor)
+    .fill(100, ifAboveMatrix(6, verticalPosition), 104, ifAboveMatrix(10, verticalPosition));
+
+  matrix
+    .fgColor(fourBallsColor)
+    .fill(107, ifAboveMatrix(6, verticalPosition), 111, ifAboveMatrix(10, verticalPosition));
+};
+
+const renderStrikes = (playStatus, matrix, verticalPosition) => {
+  const oneStrikeColor = playStatus.strikeCount > 0 ? 0xFFD500 : 0x333333;
+  const twoStrikeColor = playStatus.strikeCount > 1 ? 0xFFD500 : 0x333333;
+  const threeStrikeColor = playStatus.strikeCount > 2 ? 0xFFD500 : 0x333333;
+
+  matrix
+    .fgColor(0xF5F5F5)
+    .font(statusFont)
+    .drawText('S', 80, verticalPosition + 14);
+
+  matrix
+    .fgColor(oneStrikeColor)
+    .fill(86, ifAboveMatrix(14, verticalPosition), 90, ifAboveMatrix(18, verticalPosition));
+
+  matrix
+    .fgColor(twoStrikeColor)
+    .fill(93, ifAboveMatrix(14, verticalPosition), 97, ifAboveMatrix(18, verticalPosition));
+
+  matrix
+    .fgColor(threeStrikeColor)
+    .fill(100, ifAboveMatrix(14, verticalPosition), 104, ifAboveMatrix(18, verticalPosition));
+};
+
+const liveGameStatus = (game, matrix, verticalPosition, backgrounds) => {
+  // console.log(game.score.playStatus);
+  const basesColor = game.score.currentInningHalf === 'TOP' ? backgrounds.awayBackground : backgrounds.homeBackground;
+
+  matrix
+    .fgColor(0xF5F5F5)
+    .font(font)
+    .drawText(game.score.currentInning ? game.score.currentInning.toString() : '1', 156, verticalPosition + 10);
 
   inningArrow(game.score.currentInningHalf, matrix, verticalPosition);
 
   // console.log(game);
 
-  ballsStrikes(game.score.playStatus, matrix, verticalPosition);
+  renderBalls(game.score.playStatus, matrix, verticalPosition);
 
-  renderBases(game.score.playStatus, matrix, verticalPosition);
+  renderStrikes(game.score.playStatus, matrix, verticalPosition);
+
+  renderBases(game.score.playStatus, basesColor, matrix, verticalPosition);
 
   renderOuts(game.score.playStatus, matrix, verticalPosition);
 
@@ -191,10 +222,10 @@ const postponedGame = (time, matrix, verticalPosition) => {
   matrix.font(font); //Resets font
 }
 
-const gameStatus = (game, matrix, verticalPosition) => {
+const gameStatus = (game, matrix, verticalPosition, backgrounds) => {
   if (game.schedule.scheduleStatus === 'POSTPONED') {
     if (game.schedule.playedStatus === 'LIVE') {
-      liveGameStatus(game, matrix, verticalPosition);
+      liveGameStatus(game, matrix, verticalPosition, backgrounds);
     } else if (game.schedule.playedStatus === 'COMPLETED' || game.schedule.playedStatus === 'COMPLETED_PENDING_REVIEW') {
       completedStatus(matrix, verticalPosition);
     } else {
@@ -205,7 +236,7 @@ const gameStatus = (game, matrix, verticalPosition) => {
 
   switch (game.schedule.playedStatus) {
     case 'LIVE':
-      liveGameStatus(game, matrix, verticalPosition);
+      liveGameStatus(game, matrix, verticalPosition, backgrounds);
       break;
     case 'UNPLAYED':
       showStartTime(game.schedule.startTime, matrix, verticalPosition);
@@ -241,7 +272,7 @@ const renderGame = (game, matrix, verticalPosition) => {
   const awayText = findTeamTextColor(awayTeam);
   const homeText = findTeamTextColor(homeTeam);
 
-  // const status = gameStatus(game);
+  const backgrounds = { awayBackground, homeBackground };
 
   const backgroundYAway = verticalPosition < 0 ? 0 : verticalPosition;
   const backgroundYHome = verticalPosition < -15 ? 0 : verticalPosition + 16;
@@ -263,9 +294,9 @@ const renderGame = (game, matrix, verticalPosition) => {
 
   matrix.fgColor(awayText);
 
-  LayoutUtils.linesToMappedGlyphs(awayLines, font.height(), 30, 15, 'center', 'middle')
+  LayoutUtils.linesToMappedGlyphs(awayLines, font.height(), 30, 15, 'left', 'middle')
     .forEach(glyph => {
-      matrix.drawText(glyph.char, glyph.x, verticalPosition + glyph.y);
+      matrix.drawText(glyph.char, glyph.x + 6, verticalPosition + glyph.y);
     });
 
   LayoutUtils.linesToMappedGlyphs(awayScoreLines, font.height(), 15, 15, 'center', 'middle')
@@ -275,9 +306,9 @@ const renderGame = (game, matrix, verticalPosition) => {
 
   matrix.fgColor(homeText);
 
-  LayoutUtils.linesToMappedGlyphs(homeLines, font.height(), 30, 15, 'center', 'middle')
+  LayoutUtils.linesToMappedGlyphs(homeLines, font.height(), 30, 15, 'left', 'middle')
     .forEach(glyph => {
-      matrix.drawText(glyph.char, glyph.x, verticalPosition + glyph.y + 16);
+      matrix.drawText(glyph.char, glyph.x + 6, verticalPosition + glyph.y + 16);
     });
 
   LayoutUtils.linesToMappedGlyphs(homeScoreLines, font.height(), 15, 15, 'center', 'middle')
@@ -285,7 +316,7 @@ const renderGame = (game, matrix, verticalPosition) => {
       matrix.drawText(glyph.char, glyph.x + 35, verticalPosition + glyph.y + 16);
     });
 
-  gameStatus(game, matrix, verticalPosition);
+  gameStatus(game, matrix, verticalPosition, backgrounds);
 }
 
 module.exports = { renderGame };
